@@ -47,12 +47,12 @@ function createPlayersWindow () {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#about')
+    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#players')
     if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html#about')
+    win.loadURL('app://./index.html#players')
   }
 
   win.on('closed', () => {
