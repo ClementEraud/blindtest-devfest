@@ -3,7 +3,6 @@
 import { app, protocol, BrowserWindow } from 'electron'
 import {
   createProtocol,
-  installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -18,7 +17,7 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
     nodeIntegration: true
-  } })
+  }, show: false })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -32,6 +31,36 @@ function createWindow () {
 
   win.on('closed', () => {
     win = null
+  })
+
+  win.once('ready-to-show', () => {
+    win.show()
+    createPlayersWindow()
+  })
+}
+
+function createPlayersWindow () {
+  // Create the browser window.
+  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
+    nodeIntegration: true
+  }, show: false })
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#about')
+    if (!process.env.IS_TEST) win.webContents.openDevTools()
+  } else {
+    createProtocol('app')
+    // Load the index.html when not in development
+    win.loadURL('app://./index.html#about')
+  }
+
+  win.on('closed', () => {
+    win = null
+  })
+
+  win.once('ready-to-show', () => {
+    win.show();
   })
 }
 
@@ -48,7 +77,7 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
-    createWindow()
+    createWindow();
   }
 })
 
@@ -70,7 +99,7 @@ app.on('ready', async () => {
     // }
 
   }
-  createWindow()
+  createWindow();
 })
 
 // Exit cleanly on request from parent process in development mode.
