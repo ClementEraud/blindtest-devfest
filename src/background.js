@@ -1,9 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
 } from 'vue-cli-plugin-electron-builder/lib'
+import { events } from "./enums/events";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -37,6 +38,13 @@ function createWindow () {
     win.show()
     createPlayersWindow()
   })
+
+  // listen to events and resend message on the same event
+  events.forEach(event => {
+    ipcMain.on(event, (e, message) => {
+      win.webContents.send(event, message);
+    });
+  });
 }
 
 function createPlayersWindow () {

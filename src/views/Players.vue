@@ -12,7 +12,14 @@
 </template>
 
 <script>
+import { ipcRenderer } from "electron";
+import { events, eventTypes } from "@/enums/events.js";
 export default {
-  name: 'players'
+  name: 'players',
+  mounted: () => {
+    ipcRenderer.on(events.get(eventTypes.launchGame), (event, message) => {
+      console.log(event, message);
+    });
+  }
 }
 </script>
