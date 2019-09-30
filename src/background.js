@@ -4,7 +4,9 @@ import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
 } from 'vue-cli-plugin-electron-builder/lib'
-import { events } from "./enums/events";
+import { events, eventTypes } from "./enums/events";
+import { connection, insertPlayer, createGame } from "./database";
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -31,18 +33,39 @@ function createWindow () {
   }
 
   win.on('closed', () => {
-    win = null
+    win = null;
+    connection.end();
   })
 
   win.once('ready-to-show', () => {
-    win.show()
-    createPlayersWindow()
+    win.show();
+    createPlayersWindow();
+    connection.connect();
   })
 
-  // listen to events and resend message on the same event
-  events.forEach(event => {
-    ipcMain.on(event, (e, message) => {
-      win.webContents.send(event, message);
+  /**
+   * Use win.webContents.send to communicate between windows, if event send to same windows use e.reply.
+   */
+  const replyOnAllWindows = (eventInsance, channel, message) => {
+    eventInsance.reply(channel, message);
+    win.webContents.send(channel, message);
+  }
+
+  // On game creation
+  const eventGameCreate = events.get(eventTypes.launchGame);
+  ipcMain.on(eventGameCreate, (e) => {
+    createGame((err, res) => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventGameCreate, res.insertId);
+    });
+  });
+
+  // on player creation
+  const eventPlayerCreate = events.get(eventTypes.createPlayer);
+  ipcMain.on(eventPlayerCreate, (e, data) => {
+    insertPlayer(data, (err, res) => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventPlayerCreate, res);
     });
   });
 }

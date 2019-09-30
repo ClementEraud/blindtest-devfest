@@ -1,11 +1,22 @@
 <template>
-  <div id="startGame">
-    <h1 class="display-2 font-weight-bold mb-3">
-      Welcome to the blindtest !
-    </h1>
-
-    <v-btn v-on:click="launchGame">Start a new game !</v-btn>
-  </div>
+  <v-container id="startGame" height="100%">
+    <v-row>
+      <v-col cols="12">
+        <page-header title="Bienvenue au blindest !"></page-header>
+      </v-col>
+    </v-row>
+    <v-row class="mt-12">
+      <v-col cols="4"></v-col>
+      <v-col cols="4">
+        <v-layout justify-center>
+          <v-btn v-on:click="launchGame" color="primary" height="70px" width="250px">
+            <div class="btn-text">Start a new game !</div>
+          </v-btn>
+        </v-layout>
+      </v-col>
+      <v-col cols="4"></v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -15,11 +26,25 @@ import { events, eventTypes } from "@/enums/events.js";
 export default {
   name: 'startGame',
   methods: {
-    launchGame: () => {
+    launchGame: function () {
       const msg = 'a new game has been launched';
-      console.log(msg);
       ipcRenderer.send(events.get(eventTypes.launchGame), msg);
+
+      ipcRenderer.on(events.get(eventTypes.launchGame), (event, gameId) => {
+
+        this.$router.push(`/create-game/${gameId}`);
+      });
     }
   }
 }
 </script>
+
+<style>
+  h1 {
+    color: var(--v-secondary-base);
+  }
+
+  .btn-text {
+    color: var(--v-secondary-base);
+  }
+</style>
