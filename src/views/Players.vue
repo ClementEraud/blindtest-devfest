@@ -1,24 +1,44 @@
 <template>
-  <v-card
-    max-width="344"
-    class="mx-auto"
-  >
-    <v-card-title>I'm a title</v-card-title>
-    <v-card-text>I'm card text</v-card-text>
-    <v-card-actions>
-      <v-btn text>Click</v-btn>
-    </v-card-actions>
-  </v-card>
+  <v-container>
+    <v-row justify="center">
+      <waiting-game-dialog :open="waitingDialog" text="En attente de début de partie"/>
+      <waiting-game-dialog :open="waitingPlayersDialog" text="En attente de création de joueurs"/>
+    </v-row>
+    <v-row>
+      <players-list :players="players"/>
+    </v-row> 
+  </v-container>
 </template>
 
 <script>
 import { ipcRenderer } from "electron";
 import { events, eventTypes } from "@/enums/events.js";
+import WaitingGameDialog from "@/components/dialogs/WaitingGameDialog.vue";
+import PlayersList from "@/components/PlayersList.vue";
+
 export default {
   name: 'players',
-  mounted: () => {
-    ipcRenderer.on(events.get(eventTypes.launchGame), (event, message) => {
-      console.log(event, message);
+  components: {
+    'waiting-game-dialog': WaitingGameDialog,
+    'players-list': PlayersList,
+  },
+  data() {
+    return {
+      waitingDialog: true,
+      waitingPlayersDialog: false,
+      players: []
+    }
+  },
+  mounted() {
+    // Setup event listeneners
+    ipcRenderer.on(events.get(eventTypes.launchGame), () => {
+      this.waitingDialog = false;
+      this.waitingPlayersDialog  = true;
+    });
+
+    ipcRenderer.on(events.get(eventTypes.createPlayer), (e, players) => {
+      this.waitingPlayersDialog = false;
+      this.players = players;
     });
   }
 }
