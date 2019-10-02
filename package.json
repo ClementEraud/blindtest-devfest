@@ -15,15 +15,19 @@
   "dependencies": {
     "async": "^3.1.0",
     "core-js": "^2.6.5",
+    "music-metadata": "^4.8.0",
     "mysql": "^2.17.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuetify": "^2.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.1",
     "electron": "^6.0.0",
     "eslint": "^5.16.0",

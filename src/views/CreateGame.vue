@@ -5,16 +5,22 @@
       <page-header title='Démarrer une nouvelle partie'></page-header>
     </v-col>
   </v-row>
+  <v-divider></v-divider>
   <v-row>
+    <v-col cols="2">
+        Création de joueur.
+    </v-col>
     <v-layout justify-center>
-      <v-col cols="2">
+      <v-col cols="10">
         <create-player :gameId ="gameId"/>
       </v-col>
     </v-layout>
   </v-row>
+  <v-divider></v-divider>
   <v-row>
     <players-list :players="players"/>
   </v-row>
+  <v-divider></v-divider>
   <v-row>
     <v-col cols="2">
       <v-layout justify-center>

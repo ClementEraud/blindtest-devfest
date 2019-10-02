@@ -1,10 +1,10 @@
 <template>
-  <v-card>
-    <v-card-text>
+  <v-card max-width="250px">
+    <v-card-title>
       <v-text-field v-model="playerName">
         {{playerName}}
       </v-text-field>
-    </v-card-text>
+    </v-card-title>
     <v-card-actions>
       <v-btn v-on:click="onCreate" text>Créer</v-btn>
     </v-card-actions>

@@ -44,7 +44,24 @@ const getPlayersOfGame = (gameId, cb) => {
   `, [gameId], (err, res) => {
     cb(err, res);
   });
-}
+};
+
+
+const addNewSong = (songPath, songName, songArtist, cb) => {
+  connection.query(`
+    SELECT id
+    FROM song
+    WHERE song.path = ?
+    AND song.name = ?
+    AND song.artist = ?
+  `, [songPath, songName, songArtist], (err, songAlreadyExists) => {
+    if (err) return cb(err);
+
+    if (songAlreadyExists && songAlreadyExists.length) return cb();
+
+    connection.query(`INSERT INTO song (name, artist, path) VALUES (?, ?, ?)`, [songName, songArtist, songPath], cb);
+  });
+};
 
 const createGame = (cb) => {
   connection.query(`INSERT INTO game () VALUES ();`, cb);
@@ -53,5 +70,6 @@ const createGame = (cb) => {
 export {
   connection,
   createGame,
-  insertPlayer
+  insertPlayer,
+  addNewSong
 }

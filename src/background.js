@@ -6,6 +6,7 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib'
 import { events, eventTypes } from "./enums/events";
 import { connection, insertPlayer, createGame } from "./database";
+import { extractSongs } from './songs';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -41,6 +42,9 @@ function createWindow () {
     win.show();
     createPlayersWindow();
     connection.connect();
+    extractSongs((err) => {
+      if (err) throw err;
+    });
   })
 
   /**
