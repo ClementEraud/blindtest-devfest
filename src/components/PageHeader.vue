@@ -7,8 +7,8 @@
 </template>
 
 <script>
-export default {
-    name: 'pageHeader',
-    props: ['title']
-}
+  export default {
+      name: 'pageHeader',
+      props: ['title']
+  }
 </script>

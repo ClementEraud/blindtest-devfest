@@ -5,8 +5,18 @@ import {
   createProtocol,
 } from 'vue-cli-plugin-electron-builder/lib'
 import { events, eventTypes } from "./enums/events";
-import { connection, insertPlayer, createGame } from "./database";
-import { extractSongs } from './songs';
+import { 
+  connection,
+  insertPlayer,
+  createGame,
+  getAllLevels,
+  createGameHasPlayer,
+} from "./database";
+import { 
+  extractSongs,
+  createPlaylists,
+  assignSongsToPlaylist,
+} from './songs';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -44,6 +54,12 @@ function createWindow () {
     connection.connect();
     extractSongs((err) => {
       if (err) throw err;
+      createPlaylists(err => {
+        if (err) throw err;
+        assignSongsToPlaylist(err => {
+          if (err) throw err;
+        });
+      });
     });
   })
 
@@ -56,7 +72,7 @@ function createWindow () {
   }
 
   // On game creation
-  const eventGameCreate = events.get(eventTypes.launchGame);
+  const eventGameCreate = events.get(eventTypes.gameCreation);
   ipcMain.on(eventGameCreate, (e) => {
     createGame((err, res) => {
       if (err) throw err;
@@ -70,6 +86,24 @@ function createWindow () {
     insertPlayer(data, (err, res) => {
       if (err) throw err;
       replyOnAllWindows(e, eventPlayerCreate, res);
+    });
+  });
+
+  // on launching game event 
+  const eventLaunchGame = events.get(eventTypes.launchGame);
+  ipcMain.on(eventLaunchGame, (e, data) => {
+    createGameHasPlayer(...data, (err, res) => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventPlayerCreate, res);
+    });
+  });
+
+  // on get all levels event 
+  const eventGetLevels = events.get(eventTypes.getAllLevels);
+  ipcMain.on(eventGetLevels, e => {
+    getAllLevels((err, res) => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventGetLevels, res);
     });
   });
 }

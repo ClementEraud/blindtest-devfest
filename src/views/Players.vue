@@ -31,7 +31,7 @@ export default {
   },
   mounted() {
     // Setup event listeneners
-    ipcRenderer.on(events.get(eventTypes.launchGame), () => {
+    ipcRenderer.on(events.get(eventTypes.gameCreation), () => {
       this.waitingDialog = false;
       this.waitingPlayersDialog  = true;
     });

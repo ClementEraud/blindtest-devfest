@@ -9,7 +9,7 @@
       <v-col cols="4"></v-col>
       <v-col cols="4">
         <v-layout justify-center>
-          <v-btn v-on:click="launchGame" color="primary" height="70px" width="250px">
+          <v-btn v-on:click="gameCreation" color="primary" height="70px" width="250px">
             <div class="btn-text">Start a new game !</div>
           </v-btn>
         </v-layout>
@@ -20,23 +20,29 @@
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
-import { events, eventTypes } from "@/enums/events.js";
+  import { ipcRenderer } from "electron";
+  import { remote } from "electron"
+  import { events, eventTypes } from "@/enums/events.js";
 
-export default {
-  name: 'startGame',
-  methods: {
-    launchGame: function () {
-      const msg = 'a new game has been launched';
-      ipcRenderer.send(events.get(eventTypes.launchGame), msg);
+  export default {
+    name: 'startGame',
+    methods: {
+      gameCreation() {
+        const msg = 'a new game has been launched';
+        ipcRenderer.send(events.get(eventTypes.gameCreation), msg);
 
-      ipcRenderer.on(events.get(eventTypes.launchGame), (event, gameId) => {
+        ipcRenderer.on(events.get(eventTypes.gameCreation), (event, gameId) => {
 
-        this.$router.push(`/create-game/${gameId}`);
-      });
-    }
+          this.$router.push(`/create-game/${gameId}`);
+        });
+      },
+      mounted() {
+        ipcRenderer.send(eventTypes.getAllLevels, (e, levels) => {
+          console.log(levels);
+        });
+      }
+    },
   }
-}
 </script>
 
 <style>

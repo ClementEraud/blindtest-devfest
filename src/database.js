@@ -63,13 +63,74 @@ const addNewSong = (songPath, songName, songArtist, cb) => {
   });
 };
 
+const addPlaylist = (playlistName, levelId, cb) => {
+  connection.query(`
+    SELECT id
+    FROM playlist
+    WHERE name = ?
+    AND levelId = ?
+  `, [playlistName, levelId], (err, playlistExists) => {
+    if (err) return cb(err);
+
+    if (playlistExists && playlistExists.length) return cb();
+
+    connection.query(`INSERT INTO playlist (name, levelId) VALUES (?, ?)`, [playlistName, levelId], cb);
+  })
+};
+
+const assignSongToPlaylist = (songId, playlistId, cb) => {
+  connection.query(
+    `
+      SELECT songId, playlistId
+      FROM playlist_has_song
+      WHERE playlistId = ?
+      AND songId = ?
+    `, [playlistId, songId], (err, songAssignedToPlaylist) => {
+      if (err) return cb(err);
+
+      if (songAssignedToPlaylist && songAssignedToPlaylist.length) return cb();
+
+      connection.query(`INSERT INTO playlist_has_song (songId, playlistId) VALUES (?, ?)`, [songId, playlistId], cb);
+    });
+}
+
+const getPlaylist = (name, cb) => {
+  connection.query(
+    `
+      SELECT *
+      FROM playlist
+      WHERE name = ?
+    `,
+    [name], cb);
+}
+
 const createGame = (cb) => {
   connection.query(`INSERT INTO game () VALUES ();`, cb);
+}
+
+const createGameHasPlayer = (gameId, players, cb) => {
+  async.each(
+    players,
+    (player, next) => connection.query(`INSERT INTO game_has_player (gameId, playerId) VALUES (?, ?)`, [gameId, player.id], next),
+    cb
+  )
+};
+
+const getAllLevels = cb => {
+  connection.query(`
+    SELECT *
+    FROM level
+  `, cb);
 }
 
 export {
   connection,
   createGame,
   insertPlayer,
-  addNewSong
+  addNewSong,
+  addPlaylist,
+  assignSongToPlaylist,
+  createGameHasPlayer,
+  getPlaylist,
+  getAllLevels
 }
