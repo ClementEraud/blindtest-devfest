@@ -13,7 +13,7 @@
 
 <script>
 import { ipcRenderer } from "electron";
-import { events, eventTypes } from "@/enums/events.js";
+import { eventTypes } from "@/enums/events.js";
 
 export default {
   name: 'createPlayer',
@@ -25,7 +25,7 @@ export default {
   props: ['gameId'],
   methods: {
     onCreate() {
-      ipcRenderer.send(events.get(eventTypes.createPlayer), {
+      ipcRenderer.send(eventTypes.createPlayer, {
         playerName: this.playerName,
         gameId: this.gameId
       });

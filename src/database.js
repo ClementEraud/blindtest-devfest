@@ -63,18 +63,40 @@ const addNewSong = (songPath, songName, songArtist, cb) => {
   });
 };
 
-const addPlaylist = (playlistName, levelId, cb) => {
+const addPlaylist = (playlistName, levelLabel, done) => {
+  async.waterfall([
+    cb => getPlaylist(playlistName, cb),
+    (playlistExists, infos, cb) => {
+      if (playlistExists && playlistExists.length) return cb();
+      getLevel(levelLabel, (err, level) => {
+        if (err) return cb(err);
+        if (level && level.length) {
+          connection.query(`INSERT INTO playlist (name, levelId) VALUES (?, ?)`, [playlistName, level[0].id], cb);
+        }
+      });
+    }
+  ], done);
+};
+
+const getLevel = (label, cb) => {
+  connection.query(`
+    SELECT *
+    FROM level
+    WHERE label = ?
+  `, [label] , cb);
+};
+
+const addLevel = (label, cb) => {
   connection.query(`
     SELECT id
-    FROM playlist
-    WHERE name = ?
-    AND levelId = ?
-  `, [playlistName, levelId], (err, playlistExists) => {
+    FROM level
+    WHERE label = ?
+  `, [label], (err, levelExists) => {
     if (err) return cb(err);
 
-    if (playlistExists && playlistExists.length) return cb();
+    if (levelExists && levelExists.length) return cb();
 
-    connection.query(`INSERT INTO playlist (name, levelId) VALUES (?, ?)`, [playlistName, levelId], cb);
+    connection.query(`INSERT INTO level (label) VALUES (?)`, [label], cb);
   })
 };
 
@@ -116,11 +138,39 @@ const createGameHasPlayer = (gameId, players, cb) => {
   )
 };
 
+const updateGamePlaylist = (gameId, playlistId, cb) => {
+  connection.query('UPDATE game SET playlistId = ? WHERE id = ?', [playlistId, gameId], cb);
+}
+
 const getAllLevels = cb => {
   connection.query(`
-    SELECT *
+    SELECT 
+      level.id as levelId,
+      level.label as levelLabel,
+      playlist.id as playlistId,
+      playlist.name as playlistName
     FROM level
-  `, cb);
+    LEFT JOIN playlist ON playlist.levelId = level.id
+  `, (err, res) => {
+    if(err) return cb(err);
+    const levelIds = new Set(res.map(resLine => resLine.levelId));
+    const levels = [];
+
+    levelIds.forEach(levelId => {
+      levels.push({
+        id: levelId,
+        label: res.find(level => level.levelId === levelId).levelLabel,
+        playlists: res
+          .filter(level => level.levelId === levelId)
+          .map(playlistOfLevel => ({
+              id: playlistOfLevel.playlistId,
+              name: playlistOfLevel.playlistName
+          }))
+          .filter(playlist => !!playlist.id)
+      });
+    });
+    return cb(null, levels);
+  });
 }
 
 export {
@@ -132,5 +182,7 @@ export {
   assignSongToPlaylist,
   createGameHasPlayer,
   getPlaylist,
-  getAllLevels
+  getAllLevels,
+  addLevel,
+  updateGamePlaylist,
 }

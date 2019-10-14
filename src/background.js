@@ -4,19 +4,22 @@ import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
 } from 'vue-cli-plugin-electron-builder/lib'
-import { events, eventTypes } from "./enums/events";
+import { eventTypes } from "./enums/events";
 import { 
   connection,
   insertPlayer,
   createGame,
   getAllLevels,
-  createGameHasPlayer,
+  updateGamePlaylist,
 } from "./database";
 import { 
   extractSongs,
   createPlaylists,
   assignSongsToPlaylist,
+  createLevels
 } from './songs';
+
+import { series, apply } from "async";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -52,14 +55,13 @@ function createWindow () {
     win.show();
     createPlayersWindow();
     connection.connect();
-    extractSongs((err) => {
+    series([
+      apply(extractSongs),
+      apply(createLevels),
+      apply(createPlaylists),
+      apply(assignSongsToPlaylist)
+    ], err => {
       if (err) throw err;
-      createPlaylists(err => {
-        if (err) throw err;
-        assignSongsToPlaylist(err => {
-          if (err) throw err;
-        });
-      });
     });
   })
 
@@ -72,7 +74,7 @@ function createWindow () {
   }
 
   // On game creation
-  const eventGameCreate = events.get(eventTypes.gameCreation);
+  const eventGameCreate = eventTypes.gameCreation;
   ipcMain.on(eventGameCreate, (e) => {
     createGame((err, res) => {
       if (err) throw err;
@@ -81,7 +83,7 @@ function createWindow () {
   });
 
   // on player creation
-  const eventPlayerCreate = events.get(eventTypes.createPlayer);
+  const eventPlayerCreate = eventTypes.createPlayer;
   ipcMain.on(eventPlayerCreate, (e, data) => {
     insertPlayer(data, (err, res) => {
       if (err) throw err;
@@ -90,16 +92,16 @@ function createWindow () {
   });
 
   // on launching game event 
-  const eventLaunchGame = events.get(eventTypes.launchGame);
+  const eventLaunchGame = eventTypes.launchGame;
   ipcMain.on(eventLaunchGame, (e, data) => {
-    createGameHasPlayer(...data, (err, res) => {
+    updateGamePlaylist(data.gameId, data.playlistId, err => {
       if (err) throw err;
-      replyOnAllWindows(e, eventPlayerCreate, res);
+      replyOnAllWindows(e, eventPlayerCreate, data);
     });
   });
 
   // on get all levels event 
-  const eventGetLevels = events.get(eventTypes.getAllLevels);
+  const eventGetLevels = eventTypes.getAllLevels;
   ipcMain.on(eventGetLevels, e => {
     getAllLevels((err, res) => {
       if (err) throw err;

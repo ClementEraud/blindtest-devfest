@@ -21,24 +21,18 @@
 
 <script>
   import { ipcRenderer } from "electron";
-  import { remote } from "electron"
-  import { events, eventTypes } from "@/enums/events.js";
+  import { eventTypes } from "@/enums/events.js";
 
   export default {
     name: 'startGame',
     methods: {
       gameCreation() {
         const msg = 'a new game has been launched';
-        ipcRenderer.send(events.get(eventTypes.gameCreation), msg);
+        ipcRenderer.send(eventTypes.gameCreation, msg);
 
-        ipcRenderer.on(events.get(eventTypes.gameCreation), (event, gameId) => {
+        ipcRenderer.on(eventTypes.gameCreation, (event, gameId) => {
 
           this.$router.push(`/create-game/${gameId}`);
-        });
-      },
-      mounted() {
-        ipcRenderer.send(eventTypes.getAllLevels, (e, levels) => {
-          console.log(levels);
         });
       }
     },

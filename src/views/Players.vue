@@ -12,7 +12,7 @@
 
 <script>
 import { ipcRenderer } from "electron";
-import { events, eventTypes } from "@/enums/events.js";
+import { eventTypes } from "@/enums/events.js";
 import WaitingGameDialog from "@/components/dialogs/WaitingGameDialog.vue";
 import PlayersList from "@/components/PlayersList.vue";
 
@@ -31,12 +31,12 @@ export default {
   },
   mounted() {
     // Setup event listeneners
-    ipcRenderer.on(events.get(eventTypes.gameCreation), () => {
+    ipcRenderer.on(eventTypes.gameCreation, () => {
       this.waitingDialog = false;
       this.waitingPlayersDialog  = true;
     });
 
-    ipcRenderer.on(events.get(eventTypes.createPlayer), (e, players) => {
+    ipcRenderer.on(eventTypes.createPlayer, (e, players) => {
       this.waitingPlayersDialog = false;
       this.players = players;
     });

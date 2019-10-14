@@ -22,6 +22,10 @@
   </v-row>
   <v-divider></v-divider>
   <v-row>
+    <playlist-selection v-on:select-playlist="selectPlaylist"/>
+  </v-row>
+  <v-divider></v-divider>
+  <v-row>
     <v-col cols="4">
       <v-layout justify-center>
         <v-btn v-on:click="goBack" color="primary" height="70px" width="700px">
@@ -43,19 +47,22 @@
 <script>
   import CreatePlayer from '@/components/CreatePlayer.vue';
   import { ipcRenderer } from "electron";
-  import { events, eventTypes } from "@/enums/events.js";
+  import { eventTypes } from "@/enums/events.js";
   import PlayersList from "@/components/PlayersList.vue";
+  import PlaylistSelection from "@/components/PlaylistSelection.vue";
 
   export default {
       name: 'createGame',
       components: {
         'create-player': CreatePlayer,
         'players-list': PlayersList,
+        'playlist-selection': PlaylistSelection
       },
       props: ['gameId'],
       data() {
         return {
-          players: []
+          players: [],
+          playlist: {}
         }
       },
       methods: {
@@ -63,14 +70,19 @@
           this.$router.go(-1);
         },
         launchGame() {
-          ipcRenderer.send(events.get(eventTypes.gameCreation), {gameId:this.gameId, players});
+          console.log(this.playlist);
+          ipcRenderer.send(eventTypes.launchGame, {gameId:this.gameId, players: this.players, playlistId: this.playlist.id});
           return;
+        },
+        selectPlaylist(playlist) {
+          this.playlist = playlist;
         }
       },
       mounted() {
-        ipcRenderer.on(events.get(eventTypes.createPlayer), (event, players) => {
+        ipcRenderer.on(eventTypes.createPlayer, (event, players) => {
           this.players = players;
         });
+        ipcRenderer.send(eventTypes.getAllLevels, {});
       }
   }
 </script>

@@ -1,6 +1,11 @@
 import * as fs from 'fs';
 import { parseFile } from 'music-metadata';
-import { addNewSong, addPlaylist, assignSongToPlaylist, getPlaylist } from "./database.js";
+import { 
+  addNewSong,
+  addPlaylist,
+  assignSongToPlaylist,
+  getPlaylist,
+  addLevel } from "./database.js";
 import { each } from "async";
 
 const extractSongs = cb => {
@@ -25,12 +30,26 @@ const extractSongs = cb => {
 
 const createPlaylists = cb => {
   const playlistsToCreate = [
-    {name: 'Rock Classic', levelId: 3},
+    {name: 'Rock Classic', level: 'Facile'},
   ];
 
   each(
     playlistsToCreate,
-    ({name, levelId}, next) => addPlaylist(name, levelId, next),
+    ({name, level}, next) => addPlaylist(name, level, next),
+    cb
+  );
+}
+
+const createLevels = cb => {
+  const levelsToCreate = [
+    'Facile',
+    'Moyen',
+    'Difficile'
+  ];
+
+  each(
+    levelsToCreate,
+    (level, next) => addLevel(level, next),
     cb
   );
 }
@@ -64,5 +83,6 @@ const assignSongsToPlaylist = cb => {
 export {
   extractSongs,
   createPlaylists,
-  assignSongsToPlaylist
+  assignSongsToPlaylist,
+  createLevels
 };
