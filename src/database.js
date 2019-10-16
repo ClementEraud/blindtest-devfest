@@ -173,6 +173,64 @@ const getAllLevels = cb => {
   });
 }
 
+const getGameInfos = (gameId, done) => {
+  async.parallel({
+    game: cb => getGame(gameId, cb),
+    gamePlayers: cb => getGamePlayers(gameId, cb),
+    gameSongs: cb => getGameSongs(gameId, cb)
+  }, (err, {game, gamePlayers, gameSongs}) => {
+    if (err) return done(err);
+    const gameRes = game[0];
+    gameRes.players = gamePlayers;
+    gameRes.songs = gameSongs;
+    done(null, gameRes);
+  });
+}
+
+const basicCbFunction = cb => (err, res) => {
+  if(err) return cb(err);
+  cb(null, res);
+}
+
+const getGame = (gameId, cb) => {
+  connection.query(`
+    SELECT
+      g.id,
+      p.name as playlistName,
+      l.label as level
+    FROM game g
+      LEFT JOIN playlist p ON p.id = g.playlistId
+      LEFT JOIN level l ON l.id = p.levelId
+    WHERE g.id = ?
+  `, [gameId], basicCbFunction(cb));
+}
+
+const getGamePlayers = (gameId, cb) => {
+  connection.query(`
+    SELECT
+      p.id,
+      p.name,
+      ghp.score
+    FROM player p
+     LEFT JOIN game_has_player ghp ON ghp.playerId = p.id
+    WHERE ghp.gameId = ?
+  `, [gameId], basicCbFunction(cb));
+}
+
+const getGameSongs = (gameId, cb) => {
+  connection.query(`
+    SELECT
+      s.id,
+      s.name,
+      s.artist,
+      s.path
+    FROM song s
+     LEFT JOIN playlist_has_song phs ON phs.songId = s.id
+     LEFT JOIN game g ON g.playlistId = phs.playlistId
+    WHERE g.id = ?
+  `, [gameId], basicCbFunction(cb));
+}
+
 export {
   connection,
   createGame,
@@ -185,4 +243,5 @@ export {
   getAllLevels,
   addLevel,
   updateGamePlaylist,
+  getGameInfos
 }

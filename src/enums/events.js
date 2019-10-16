@@ -4,5 +4,6 @@ export const eventTypes = {
   gameCreation: 'gameCreationEvent',
   createPlayer: 'createPlayerEvent',
   launchGame: 'launchGameEvent',
-  getAllLevels: 'getAllLevelsEvent'
+  getAllLevels: 'getAllLevelsEvent',
+  getGame: 'getGameEvent',
 }

@@ -70,8 +70,8 @@
           this.$router.go(-1);
         },
         launchGame() {
-          console.log(this.playlist);
           ipcRenderer.send(eventTypes.launchGame, {gameId:this.gameId, players: this.players, playlistId: this.playlist.id});
+          this.$router.push(`/game/administration/${this.gameId}`);
           return;
         },
         selectPlaylist(playlist) {

@@ -28,18 +28,6 @@ const extractSongs = cb => {
   );
 };
 
-const createPlaylists = cb => {
-  const playlistsToCreate = [
-    {name: 'Rock Classic', level: 'Facile'},
-  ];
-
-  each(
-    playlistsToCreate,
-    ({name, level}, next) => addPlaylist(name, level, next),
-    cb
-  );
-}
-
 const createLevels = cb => {
   const levelsToCreate = [
     'Facile',
@@ -50,6 +38,18 @@ const createLevels = cb => {
   each(
     levelsToCreate,
     (level, next) => addLevel(level, next),
+    cb
+  );
+}
+
+const createPlaylists = cb => {
+  const playlistsToCreate = [
+    {name: 'Rock Classic', level: 'Facile'},
+  ];
+
+  each(
+    playlistsToCreate,
+    ({name, level}, next) => addPlaylist(name, level, next),
     cb
   );
 }

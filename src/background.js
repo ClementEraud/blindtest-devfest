@@ -11,6 +11,7 @@ import {
   createGame,
   getAllLevels,
   updateGamePlaylist,
+  getGameInfos,
 } from "./database";
 import { 
   extractSongs,
@@ -106,6 +107,14 @@ function createWindow () {
     getAllLevels((err, res) => {
       if (err) throw err;
       replyOnAllWindows(e, eventGetLevels, res);
+    });
+  });
+
+  const eventGetGame = eventTypes.getGame;
+  ipcMain.on(eventGetGame, (e, gameId) => {
+    getGameInfos(gameId, (err, game) => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventGetGame, game);
     });
   });
 }
