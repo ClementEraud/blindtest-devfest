@@ -79,10 +79,9 @@ const assignSongsToPlaylist = cb => {
   );
 }
 
-
 export {
   extractSongs,
   createPlaylists,
   assignSongsToPlaylist,
-  createLevels
+  createLevels,
 };
