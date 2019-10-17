@@ -21,7 +21,6 @@ import {
 } from './songs';
 
 import { series, apply } from "async";
-import * as fs from "fs";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -118,12 +117,6 @@ function createWindow () {
       replyOnAllWindows(e, eventGetGame, game);
     });
   });
-
-  const eventGetSong = eventTypes.getSong;
-  ipcMain.on(eventGetSong, (e, path) => fs.readFile(path, (err, sound) => {
-    if (err) throw err;
-    replyOnAllWindows(e, eventGetSong, sound);
-  }));
 }
 
 function createPlayersWindow () {

@@ -9,18 +9,18 @@ import {
 import { each } from "async";
 
 const extractSongs = cb => {
-  const songsFiles = fs.readdirSync('src/assets/songs');
+  const songsFiles = fs.readdirSync('public/assets/songs');
 
   each(
     songsFiles,
     (songFile, next) => {
-      const songPath = `src/assets/songs/${songFile}`;
+      const songPath = `public/assets/songs/${songFile}`;
     
       parseFile(songPath)
         .then(metadata => {
           const {artist, title} = metadata.common;
   
-          addNewSong(songPath, title, artist, next);
+          addNewSong(`./assets/songs/${songFile}`, title, artist, next);
         })
         .catch(err => cb(err));
     },

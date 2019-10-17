@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-import { eventTypes } from '@/enums/events.js';
+import { Howl } from "howler";
 export default {
   name: 'musicPlayer',
   props: ['songs', 'playlistName'],
@@ -38,30 +37,15 @@ export default {
       return 50;
     }
   },
-  watch: {
-    sounds(val) {
-      this.currentSong = this.songs[0];
-    },
-  },
   methods: {
     play() {
-      this.getSound((event, song) => {
-        console.log(song);
-        const music = new Audio(song);
-        music.load();
-          
-        music.addEventListener('ended', function() {
-          this.currentTime = 0;
-          this.play();
-        }, false);
-          
-        music.play();
+      this.currentSong = this.songs[0];
+      console.log(JSON.parse(JSON.stringify(this.currentSong)));
+      const music = new Howl({
+        src: [this.currentSong.path],
       });
+      music.play();
     },
-    getSound(cb) {
-      ipcRenderer.on(eventTypes.getSound, cb);
-      ipcRenderer.send(eventTypes.getSound, this.currentSong.path);
-    }
-  }
+  },
 }
 </script>
