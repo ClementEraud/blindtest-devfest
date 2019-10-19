@@ -97,7 +97,7 @@ function createWindow () {
   ipcMain.on(eventLaunchGame, (e, data) => {
     updateGamePlaylist(data.gameId, data.playlistId, err => {
       if (err) throw err;
-      replyOnAllWindows(e, eventPlayerCreate, data);
+      replyOnAllWindows(e, eventLaunchGame, data);
     });
   });
 

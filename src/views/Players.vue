@@ -42,7 +42,7 @@ export default {
     });
 
     ipcRenderer.on(eventTypes.launchGame, (e, data) => {
-      console.log('launchGame', data);
+      this.$router.push(`/game/players/${data.gameId}`);
     });
   }
 }
