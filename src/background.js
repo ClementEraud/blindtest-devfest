@@ -12,6 +12,7 @@ import {
   getAllLevels,
   updateGamePlaylist,
   getGameInfos,
+  updateScore
 } from "./database";
 import { 
   extractSongs,
@@ -115,6 +116,22 @@ function createWindow () {
     getGameInfos(gameId, (err, game) => {
       if (err) throw err;
       replyOnAllWindows(e, eventGetGame, game);
+    });
+  });
+
+  const eventAddScore = eventTypes.addScore;
+  ipcMain.on(eventAddScore, (e, {player, gameId}) => {
+    updateScore(player, gameId, 'add', err => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventAddScore);
+    });
+  });
+
+  const eventReduceScore = eventTypes.reduceScore;
+  ipcMain.on(eventReduceScore, (e, {player, gameId}) => {
+    updateScore(player, gameId, 'reduce', err => {
+      if (err) throw err;
+      replyOnAllWindows(e, eventReduceScore);
     });
   });
 }

@@ -9,7 +9,24 @@
       <v-col cols="2"></v-col>
     </v-row>
     <v-divider></v-divider>
-    <v-row>Players and scores: {{ game }}</v-row>
+    <v-row>
+      <v-layout justify-center>
+        <v-col v-for="player in game.players" :key="player.id">
+          <v-card>
+            <v-card-title>{{ player.name }}</v-card-title>
+            <v-card-text>{{ player.score }}</v-card-text>
+            <v-card-actions>
+              <v-btn text icon color="black" v-on:click="reduceScore(player)">
+                <v-icon>mdi-minus</v-icon>
+              </v-btn>
+              <v-btn text icon color="black" v-on:click="addScore(player)">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-layout>
+    </v-row>
   </v-container>
 </template>
 
@@ -34,6 +51,16 @@ export default {
       this.game = game;
     });
     ipcRenderer.send(eventTypes.getGame, this.gameId);
+  },
+  methods: {
+    addScore(player) {
+      ipcRenderer.send(eventTypes.addScore, {player: player, gameId: this.gameId});
+      player.score = player.score + 1;
+    },
+    reduceScore(player) {
+      ipcRenderer.send(eventTypes.reduceScore, {player: player, gameId: this.gameId});
+      player.score = player.score - 1;
+    }
   }
 }
 </script>

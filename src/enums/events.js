@@ -7,4 +7,6 @@ export const eventTypes = {
   getAllLevels: 'getAllLevelsEvent',
   getGame: 'getGameEvent',
   getSong: 'getSongEvent',
+  addScore: 'addScore',
+  reduceScore: 'reduceScore'
 }
