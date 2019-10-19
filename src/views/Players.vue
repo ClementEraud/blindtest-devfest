@@ -40,6 +40,10 @@ export default {
       this.waitingPlayersDialog = false;
       this.players = players;
     });
+
+    ipcRenderer.on(eventTypes.launchGame, (e, data) => {
+      console.log('launchGame', data);
+    });
   }
 }
 </script>

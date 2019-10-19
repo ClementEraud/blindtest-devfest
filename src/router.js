@@ -30,6 +30,12 @@ export default new Router({
       name: 'managingGame',
       props: true,
       component: () => import('./views/ManagingGame.vue')
+    },
+    {
+      path: '/game/players/:gameId',
+      name: 'playersGame',
+      props: true,
+      component: () => import('./views/PlayersGame.vue')
     }
   ]
 })

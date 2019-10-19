@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-col cols="4">{{ playlistName }} : {{currentSongIndex+1}} / {{songs.length}}</v-col>
+      <v-col cols="4">{{ playlistName }} : {{currentSongIndex+1}} / {{songs ? songs.length : 0}}</v-col>
       <v-col>
         <v-progress-linear :value="progressValue"></v-progress-linear>
       </v-col>
