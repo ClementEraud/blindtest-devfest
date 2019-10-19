@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
+  installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 import { eventTypes } from "./enums/events";
 import { 
@@ -27,53 +28,33 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
+let adminWindow = null;
+let gameWindow= null;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
-function createWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
-    nodeIntegration: true
-  }, show: false })
-
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    win.loadURL('app://./index.html')
-  }
-
-  win.on('closed', () => {
-    win = null;
-    connection.end();
-  })
-
-  win.once('ready-to-show', () => {
-    win.show();
-    createPlayersWindow();
-    connection.connect();
-    series([
-      apply(extractSongs),
-      apply(createLevels),
-      apply(createPlaylists),
-      apply(assignSongsToPlaylist)
-    ], err => {
-      if (err) throw err;
-    });
-  })
+function createWindows () {
+  /**
+   * Create the App Windows
+   */
+  createAdminWindow()
 
   /**
    * Use win.webContents.send to communicate between windows, if event send to same windows use e.reply.
    */
-  const replyOnAllWindows = (eventInsance, channel, message) => {
-    eventInsance.reply(channel, message);
-    win.webContents.send(channel, message);
+  const replyOnAllWindows = (eventInstance, channel, message) => {
+    eventInstance.reply(channel, message);
+    adminWindow.webContents.send(channel, message);
+    gameWindow.webContents.send(channel, message);
   }
+
+  // Events listing and management
+  // On game cancellation
+  const eventGameCancel = eventTypes.gameCancellation;
+  ipcMain.on(eventGameCancel, (e) => {
+    replyOnAllWindows(e, eventGameCancel);
+  });
 
   // On game creation
   const eventGameCreate = eventTypes.gameCreation;
@@ -84,7 +65,7 @@ function createWindow () {
     });
   });
 
-  // on player creation
+  // On player creation
   const eventPlayerCreate = eventTypes.createPlayer;
   ipcMain.on(eventPlayerCreate, (e, data) => {
     insertPlayer(data, (err, res) => {
@@ -93,7 +74,7 @@ function createWindow () {
     });
   });
 
-  // on launching game event 
+  // On launching game event 
   const eventLaunchGame = eventTypes.launchGame;
   ipcMain.on(eventLaunchGame, (e, data) => {
     updateGamePlaylist(data.gameId, data.playlistId, err => {
@@ -102,7 +83,7 @@ function createWindow () {
     });
   });
 
-  // on get all levels event 
+  // On get all levels event 
   const eventGetLevels = eventTypes.getAllLevels;
   ipcMain.on(eventGetLevels, e => {
     getAllLevels((err, res) => {
@@ -136,28 +117,67 @@ function createWindow () {
   });
 }
 
-function createPlayersWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
-    nodeIntegration: true
-  }, show: false })
+function createAdminWindow() {
+  /**
+   * Create the Admin Window
+   */
+  adminWindow = new BrowserWindow({ webPreferences: { nodeIntegration: true }, show: false })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#players')
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    adminWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#admin')
+    if (!process.env.IS_TEST) adminWindow.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html#players')
+    adminWindow.loadURL('app://./index.html#admin')
   }
 
-  win.on('closed', () => {
-    win = null
+  adminWindow.on('closed', () => {
+    if(gameWindow)
+      gameWindow.close()
+
+    adminWindow = null;
+    connection.end();
   })
 
-  win.once('ready-to-show', () => {
-    win.show();
+  adminWindow.once('ready-to-show', () => {
+    adminWindow.maximize();
+    adminWindow.show();
+    createGameWindow();
+    connection.connect();
+    series([
+      apply(extractSongs),
+      apply(createLevels),
+      apply(createPlaylists),
+      apply(assignSongsToPlaylist)
+    ], err => {
+      if (err) throw err;
+    });
+  })
+}
+
+function createGameWindow () {
+  /**
+   * Create the Game Window
+   */
+  gameWindow = new BrowserWindow({ webPreferences: { nodeIntegration: true }, show: false })
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    gameWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#game')
+    if (!process.env.IS_TEST) gameWindow.webContents.openDevTools()
+  } else {
+    createProtocol('app')
+    // Load the index.html when not in development
+    gameWindow.loadURL('app://./index.html#game')
+  }
+
+  gameWindow.on('closed', () => { gameWindow = null })
+
+  gameWindow.once('ready-to-show', () => {
+    gameWindow.maximize();
+    gameWindow.show();
   })
 }
 
@@ -173,9 +193,8 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow();
-  }
+  if (adminWindow === null && gameWindow === null)
+    createWindows();
 })
 
 // This method will be called when Electron has finished
@@ -183,14 +202,14 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
-    // try {
-    //   await installVueDevtools()
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
-
+    try {
+      await installVueDevtools()
+    } catch (e) {
+      console.error('Vue Devtools failed to install:', e.toString())
+    }
   }
-  createWindow();
+
+  createWindows();
 })
 
 // Exit cleanly on request from parent process in development mode.
