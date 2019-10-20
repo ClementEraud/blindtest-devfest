@@ -10,16 +10,16 @@
       {{songs ? songs[currentSongIndex].artist : ''}} - {{songs ? songs[currentSongIndex].name : ''}}
     </v-card-text>
     <v-card-actions>
-      <v-btn text icon v-on:click="previous()">
+      <v-btn @click="previous()" :disabled="currentSongIndex === 0" icon text>
         <v-icon>mdi-skip-previous</v-icon>
       </v-btn>
-      <v-btn text icon v-on:click="pause()">
+      <v-btn @click="pause()" :disabled="!playing" icon text>
         <v-icon>mdi-pause</v-icon>
       </v-btn>
-      <v-btn text icon v-on:click="play()">
+      <v-btn @click="play()" :disabled="playing" icon text>
         <v-icon>mdi-play</v-icon>
       </v-btn>
-      <v-btn text icon v-on:click="next()">
+      <v-btn @click="next()" :disabled="currentSongIndex === songs.length - 1" icon text>
         <v-icon>mdi-skip-next</v-icon>
       </v-btn>
     </v-card-actions>
@@ -46,41 +46,60 @@ export default {
     return {
       currentSongIndex: 0,
       audio: null,
+      playing: false,
       progressValue: 0,
       intervalID: null,
     }
   },
   methods: {
+    pause() {
+      /**
+       * Pause the current song
+       */
+      this.playing = false;
+
+      this.audio.pause();
+      clearInterval(this.intervalID);
+    },
     play() {
+      /**
+       * Play the current song
+       */
+      this.playing = true;
+
       this.audio.play();
       // progress bar, +7 every seconds so it will take about 15sec too go to 100.
       this.intervalID = setInterval(() => {
         this.progressValue = this.progressValue + 7;
       }, 1000);
     },
-    pause() {
-      this.audio.pause();
-      clearInterval(this.intervalID);
-    },
     next() {
-      this.currentSongIndex = this.currentSongIndex === this.songs.length ? this.songs.length : this.currentSongIndex + 1;
+      this.currentSongIndex = this.currentSongIndex === this.songs.length - 1 ? this.songs.length - 1 : this.currentSongIndex + 1;
     },
     previous() {
       this.currentSongIndex = this.currentSongIndex === 0 ? 0 : this.currentSongIndex - 1;
     }
   },
+  mounted() {
+    this.currentSongIndex = 0;
+
+    this.audio = new Howl({
+      src: [this.songs[this.currentSongIndex].path],
+    });
+  },
+  props: {
+    playlistName: String,
+    songs: Array
+  },
   watch: {
-    songs() {
-      this.currentSongIndex = 0;
-    },
-    currentSongIndex(newVal) {
+    currentSongIndex() {
       clearInterval(this.intervalID);
       this.progressValue = 0;
-      if (this.audio) {
+      if (this.audio !== null) {
         this.audio.pause();
       }
       this.audio = new Howl({
-        src: [this.songs[newVal].path],
+        src: [this.songs[this.currentSongIndex].path],
       });
     },
     progressValue(newVal) {
@@ -89,9 +108,5 @@ export default {
       }
     }
   },
-  props: {
-      playlistName: String,
-      songs: Array
-    },
 }
 </script>
