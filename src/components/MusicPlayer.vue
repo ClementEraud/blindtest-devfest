@@ -70,8 +70,12 @@ export default {
     }
   },
   watch: {
-    songs() {
+    songs(newVal) {
       this.currentSongIndex = 0;
+      // First song loading
+      this.audio = new Howl({
+        src: [newVal[0].path],
+      });
     },
     currentSongIndex(newVal) {
       clearInterval(this.intervalID);
@@ -82,6 +86,7 @@ export default {
       this.audio = new Howl({
         src: [this.songs[newVal].path],
       });
+      console.log(this.audio);
     },
     progressValue(newVal) {
       if (newVal >= 100) {
