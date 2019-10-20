@@ -83,8 +83,7 @@ function createWindows () {
   ipcMain.on(eventOpenGameWindow, (e) => {
     if(gameWindow === null)
       createGameWindow()
-
-    replyOnAllWindows(e, eventGameCreate);
+    replyOnAllWindows(e, eventOpenGameWindow);
   })
 
   // On player creation

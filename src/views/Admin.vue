@@ -27,23 +27,13 @@
     export default {
         name: 'Admin',
         components: { },
-        data: () => ({
-            
-        }),
-        computed: {
-
-        },
+        data: () => ({ }),
         methods: {
             openGameWindow() {
                 ipcRenderer.send(eventTypes.gameWindowOpen, {})
             }
         },
-        mounted() {
-            
-        },
-        props: {
-            players: Array
-        }
+        mounted() { }
     }
 </script>
 
