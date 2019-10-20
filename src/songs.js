@@ -45,6 +45,7 @@ const createLevels = cb => {
 const createPlaylists = cb => {
   const playlistsToCreate = [
     {name: 'Rock Classic', level: 'Facile'},
+    {name: 'Metal', level: 'Moyen'}
   ];
 
   each(
@@ -65,6 +66,16 @@ const assignSongsToPlaylist = cb => {
     {songId: 7, playlistName: 'Rock Classic'},
     {songId: 8, playlistName: 'Rock Classic'},
     {songId: 9, playlistName: 'Rock Classic'},
+    {songId: 10, playlistName: 'Metal'},
+    {songId: 11, playlistName: 'Metal'},
+    {songId: 12, playlistName: 'Metal'},
+    {songId: 13, playlistName: 'Metal'},
+    {songId: 14, playlistName: 'Metal'},
+    {songId: 15, playlistName: 'Metal'},
+    {songId: 16, playlistName: 'Metal'},
+    {songId: 17, playlistName: 'Metal'},
+    {songId: 18, playlistName: 'Metal'},
+    {songId: 19, playlistName: 'Metal'},
   ];
 
   each(
