@@ -101,6 +101,7 @@ export default {
       this.audio = new Howl({
         src: [this.songs[this.currentSongIndex].path],
       });
+      console.log(this.audio);
     },
     progressValue(newVal) {
       if (newVal >= 100) {
