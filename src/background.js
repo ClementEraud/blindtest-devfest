@@ -1,5 +1,5 @@
 /**
- * Last update: 20/10/2019
+ * Last update: 20/10/201
  */
 
 'use strict'
@@ -70,6 +70,12 @@ function createWindows () {
 
       replyOnAllWindows(e, eventGameCreate, res.insertId);
     });
+  });
+
+  // On game end
+  const eventGameEnd = eventTypes.gameEnd;
+  ipcMain.on(eventGameEnd, (e, gameId) => {
+    replyOnAllWindows(e, eventGameEnd, gameId)
   });
 
   // 

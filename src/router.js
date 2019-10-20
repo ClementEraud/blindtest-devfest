@@ -3,12 +3,15 @@ import Router from 'vue-router'
 
 import Admin from './views/Admin.vue'
 import AdminGame from './views/admin/Game.vue'
+import AdminGameEnd from './views/admin/game/End.vue'
 import AdminGamePlay from './views/admin/game/Play.vue'
 import AdminGameSet from './views/admin/game/Set.vue'
 import AdminHome from './views/admin/Home.vue'
 
 import Game from './views/Game.vue'
 import GameHome from './views/game/Home.vue'
+import GameEnd from './views/game/End.vue'
+import GamePalmares from './views/game/Palmares.vue'
 import GamePlay from './views/game/Play.vue'
 
 Vue.use(Router)
@@ -31,6 +34,11 @@ export default new Router({
           component: AdminGame,
           children: [
             {
+              path: 'end',
+              name: 'admin-game-end',
+              component: AdminGameEnd
+            },
+            {
               path: 'play',
               name: 'admin-game-play',
               component: AdminGamePlay
@@ -50,6 +58,11 @@ export default new Router({
       component: Game,
       children: [
         {
+          path: '',
+          name: 'palmares',
+          component: GamePalmares
+        },
+        {
           path: ':gameId',
           name: 'game',
           component: GameHome
@@ -58,6 +71,11 @@ export default new Router({
           path: ':gameId/play',
           name: 'game-play',
           component: GamePlay
+        },
+        {
+          path: ':gameId/end',
+          name: 'game-end',
+          component: GameEnd
         }
       ],
     },

@@ -35,6 +35,8 @@
 
                 this.waitingDialog = true
                 this.waitingPlayersDialog = false
+
+                this.players = [ ]
             });
 
             ipcRenderer.on(eventTypes.gameCreation, (event, gameId) => {
@@ -42,6 +44,10 @@
                 this.waitingPlayersDialog  = true;
 
                 this.$router.push(`/game/${gameId}`)
+            });
+
+            ipcRenderer.on(eventTypes.gameEnd, (event, gameId) => {
+                this.$router.push(`/game/${gameId}/end`)
             });
 
             ipcRenderer.on(eventTypes.createPlayer, (e, players) => {

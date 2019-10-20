@@ -1,13 +1,13 @@
 <template>
-    <v-container class="fill-height" fluid>
-        <v-row align="center" justify="center">
-            <v-col cols="4" class="text-center">
-                <v-btn color="primary" x-large @click="createGame" >
-                    Start a new game !
-                </v-btn>
-            </v-col>
-        </v-row>
-    </v-container>
+  <v-container class="fill-height" fluid>
+    <v-row align="center" justify="center">
+      <v-col cols="5" class="text-center">
+        <v-btn color="primary" x-large @click="createGame" >
+          Lancer une nouvelle partie
+        </v-btn>
+        </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

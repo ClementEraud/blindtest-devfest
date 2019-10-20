@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-toolbar elevation="1">
-            <v-toolbar-title>Partie n°{{ gameId }} - Préparation</v-toolbar-title>
+            <v-toolbar-title>Partie n°{{ gameId }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <template v-if="$vuetify.breakpoint.smAndUp">
                 <v-btn icon @click="cancelGame">
@@ -10,7 +10,7 @@
             </template>
         </v-toolbar>
 
-        <router-view :gameId="gameId" :players="players" @add:player="addPlayer" @launch:game="launchGame" />
+        <router-view :gameId="gameId" :players="players" @add:player="addPlayer" @end:game="endGame" @launch:game="launchGame" />
     </v-container>
 </template>
 
@@ -21,7 +21,7 @@
     export default {
         name: 'AdminGame',
         data: () => ({
-            players: [],
+            players: [ ],
         }),
         methods: {
             addPlayer(playerName) {
@@ -33,6 +33,10 @@
             cancelGame() {
                 ipcRenderer.send(eventTypes.gameCancellation, {});
                 this.$router.push('/admin')
+            },
+            endGame() {
+                ipcRenderer.send(eventTypes.gameEnd, { gameId: this.gameId });
+                this.$router.push(`/admin/game/${this.gameId}/end`)
             },
             goBack() {
                 this.$router.go(-1);
