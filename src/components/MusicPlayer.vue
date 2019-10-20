@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-col cols="4">{{ playlistName }} : {{currentSongIndex+1}} / {{songs ? songs.length : 0}}</v-col>
+      <v-col cols="4">{{ playlistName }} : {{currentSongIndex + 1}} / {{songs ? songs.length : 0}}</v-col>
       <v-col>
         <v-progress-linear :value="progressValue"></v-progress-linear>
       </v-col>
@@ -29,14 +29,32 @@
 <script>
 import { Howl } from "howler";
 export default {
-  name: 'musicPlayer',
-  props: ['songs', 'playlistName'],
+  name: 'MusicPlayer',
   data() {
     return {
       currentSongIndex: undefined,
       audio: undefined,
       progressValue: 0,
       intervalID: undefined,
+    }
+  },
+  methods: {
+    play() {
+      this.audio.play();
+      // progress bar, +7 every seconds so it will take about 15sec too go to 100.
+      this.intervalID = setInterval(() => {
+        this.progressValue = this.progressValue + 7;
+      }, 1000);
+    },
+    pause() {
+      this.audio.pause();
+      clearInterval(this.intervalID);
+    },
+    next() {
+      this.currentSongIndex = this.currentSongIndex === this.songs.length ? this.songs.length : this.currentSongIndex + 1;
+    },
+    previous() {
+      this.currentSongIndex = this.currentSongIndex === 0 ? 0 : this.currentSongIndex - 1;
     }
   },
   watch: {
@@ -59,24 +77,9 @@ export default {
       }
     }
   },
-  methods: {
-    play() {
-      this.audio.play();
-      // progress bar, +7 every seconds so it will take about 15sec too go to 100.
-      this.intervalID = setInterval(() => {
-        this.progressValue = this.progressValue + 7;
-      }, 1000);
+  props: {
+      playlistName: String,
+      songs: Array
     },
-    pause() {
-      this.audio.pause();
-      clearInterval(this.intervalID);
-    },
-    next() {
-      this.currentSongIndex = this.currentSongIndex === this.songs.length ? this.songs.length : this.currentSongIndex + 1;
-    },
-    previous() {
-      this.currentSongIndex = this.currentSongIndex === 0 ? 0 : this.currentSongIndex - 1;
-    }
-  },
 }
 </script>

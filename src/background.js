@@ -100,19 +100,12 @@ function createWindows () {
     });
   });
 
-  const eventAddScore = eventTypes.addScore;
-  ipcMain.on(eventAddScore, (e, {player, gameId}) => {
-    updateScore(player, gameId, 'add', err => {
+  // Point updated
+  const eventScoreUpdated = eventTypes.scoreUpdate;
+  ipcMain.on(eventScoreUpdated, (e, { player, gameId }) => {
+    updateScore(player, gameId, err => {
       if (err) throw err;
-      replyOnAllWindows(e, eventAddScore);
-    });
-  });
-
-  const eventReduceScore = eventTypes.reduceScore;
-  ipcMain.on(eventReduceScore, (e, {player, gameId}) => {
-    updateScore(player, gameId, 'reduce', err => {
-      if (err) throw err;
-      replyOnAllWindows(e, eventReduceScore);
+      replyOnAllWindows(e, eventScoreUpdated, player);
     });
   });
 }

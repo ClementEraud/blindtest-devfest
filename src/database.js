@@ -231,13 +231,17 @@ const getGameSongs = (gameId, cb) => {
   `, [gameId], basicCbFunction(cb));
 }
 
-const updateScore = (player, gameId, action, cb) => {
+const updateScore = (player, gameId, cb) => {
+  /**
+   * Mise à jour du score du joueur en base
+   */
   if (!player || !gameId) return cb();
 
-  const newScore = action === 'add' ? player.score + 1 : player.score - 1;
-  connection.query(`
-    UPDATE game_has_player SET score = ? WHERE playerId = ? AND gameId = ?
-  `, [newScore, player.id, gameId], cb)
+  // const newScore = action === 'add' ? player.score + 1 : player.score - 1;
+  connection.query(
+    `UPDATE game_has_player SET score = ? WHERE playerId = ? AND gameId = ?`,
+    [ player.score, player.id, gameId ],
+    cb)
 }
 
 
