@@ -8,15 +8,7 @@
         <router-view :gameId="gameId" :players="players" />
     </v-content>
 
-  <!-- <v-container>
-    <v-row justify="center">
-      <waiting-game-dialog :open="waitingDialog" text="En attente de début de partie"/>
-      <waiting-game-dialog :open="waitingPlayersDialog" text="En attente de création de joueurs"/>
-    </v-row>
-    <v-row>
-      <players-list :players="players"/>
-    </v-row> 
-  </v-container> -->
+    <!-- TODO ECRAN DE SCORE A LA PLACE DE WAITING DIALOG -->
 </template>
 
 <script>

@@ -14,7 +14,8 @@
         name: 'GamePlay',
         components: { },
         data: () => ({
-            colors: ["blue", "red", "green", "orange"],
+            colorLock: {},
+            colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"],
             scores: [ ],
 
             height: 0,
@@ -114,14 +115,23 @@
             },
             updatePlayerScore(player) {
                 const index = this.scores.findIndex(score => score.player === player.name)
-                console.log(this.scores[0])
                 this.scores[index].score = player.score
-                console.log(this.scores[0])
+
+                this.update()
             },
             update() {
+                const color_white = "rgb(255, 255, 255)"
+
                 this.g.selectAll(".bar")
                     .data(this.scores)
                     .transition().call(this.updateScore)
+
+                this.g.selectAll(".arc")
+                    .data(this.scores)
+                    .filter(function(d) {
+                        return d3.select(this).attr("stroke") !== color_white && d >= 1
+                    })
+                    .call(this.updateColor)
             },
             
             // Animations
@@ -146,6 +156,15 @@
                     .startAngle( -Math.PI / 2 )
                     .endAngle(Math.PI / 2 ))
                     .on("end", function () { d3.select(this).transition().call(exhaleAux); });
+            },
+            updateColor(arc) {
+                d3.select(this.colorLock)
+                    .transition()
+                    .duration(1000)
+                    .tween("attr:color", function() {
+                        var i = d3.interpolateRgb("black", "white");
+                        return function(t) { arc.attr("stroke", i(t)); };
+                    });
             },
             updateScore(transition) {
                 transition.duration(1000).ease(d3.easeLinear)
@@ -174,8 +193,7 @@
             svgWidth() {
                 this.svgWidth = document.getElementById("score_container").offsetWidth
             },
-            scores: function() {
-                console.log('UPDATE')
+            scores() {
                 this.update()
             }
         }

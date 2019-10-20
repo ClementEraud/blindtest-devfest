@@ -18,7 +18,7 @@
                         <v-list-item>
                             <v-list-item-avatar>
                                 <v-avatar :color="colors[index]" left size="62">
-                                    <span class="white--text headline"> {{ player.name[0] }} </span>
+                                    <span class="white--text headline"> {{ player.name[0].toUpperCase() }} </span>
                                 </v-avatar>
                             </v-list-item-avatar>
 
@@ -83,7 +83,7 @@
         name: 'AdminGameSet',
         components: { },
         data: () => ({
-            colors: ["blue", "red", "green", "orange"],
+            colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"],
             item: 0,
             levels: [ ],
             playerToAdd: "",

@@ -14,7 +14,7 @@
 
                             <v-list-item-avatar>
                                 <v-avatar :color="colors[index]" size="36">
-                                    <span class="white--text headline"> {{ player.name[0] }} </span>
+                                    <span class="white--text headline"> {{ player.name[0].toUpperCase() }} </span>
                                 </v-avatar>
                             </v-list-item-avatar>
                         </v-list-item>
@@ -30,7 +30,7 @@
         name: 'GameHome',
         components: { },
         data: () => ({
-            colors: ["blue", "red", "green", "orange"]
+            colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]
         }),
         computed: {
 

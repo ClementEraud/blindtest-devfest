@@ -1,3 +1,7 @@
+/**
+ * Last update: 20/10/2019
+ */
+
 'use strict'
 
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
@@ -26,8 +30,7 @@ import { series, apply } from "async";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+// Two windows : one for the admin, and one for the players
 let adminWindow = null;
 let gameWindow= null;
 

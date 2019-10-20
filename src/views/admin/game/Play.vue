@@ -1,20 +1,33 @@
 <template>
   <v-container>
-    <v-divider></v-divider>
     <v-row>
       <v-col cols="2"></v-col>
       <v-col>
-        <music-player :playlistName="game.playlistName" :songs="game.songs"/>
+        <music-player :playlistName="game.playlistName" :songs="songs"/>
       </v-col>
       <v-col cols="2"></v-col>
     </v-row>
     <v-divider></v-divider>
     <v-row>
       <v-layout justify-center>
-        <v-col v-for="player in game.players" :key="player.id">
+        <v-col v-for="(player, index) in game.players" :key="player.id" cols="3">
           <v-card>
-            <v-card-title>{{ player.name }}</v-card-title>
-            <v-card-text>{{ player.score }}</v-card-text>
+            <v-card-title>
+                <v-list-item>
+                    <v-list-item-avatar>
+                        <v-avatar :color="colors[index]" left>
+                            <span class="white--text headline"> {{ player.name[0].toUpperCase() }} </span>
+                        </v-avatar>
+                    </v-list-item-avatar>
+
+                    <v-list-item-content>
+                        <span class="title font-weight-light">
+                            {{ player.name }}
+                        </span>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-card-title>
+            <v-card-text v-if="player.score">Score : {{ player.score }}</v-card-text>
             <v-card-actions>
               <v-btn text icon color="black" v-on:click="reduceScore(player)">
                 <v-icon>mdi-minus</v-icon>
@@ -41,11 +54,14 @@
             'music-player': MusicPlayer
         },
         data: () => ({
-            game: { }
+            colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"],
+            game: { },
+            songs: [ ]
         }),
         mounted() {
             ipcRenderer.on(eventTypes.getGame, (event, game) => {
                 this.game = game
+                this.songs = this.game.songs
             });
             ipcRenderer.send(eventTypes.getGame, this.gameId);
         },

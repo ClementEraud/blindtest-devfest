@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="songs.length > 0">
     <v-card-title>
       <v-col cols="4">{{ playlistName }} : {{currentSongIndex + 1}} / {{songs ? songs.length : 0}}</v-col>
       <v-col>
@@ -24,6 +24,18 @@
       </v-btn>
     </v-card-actions>
   </v-card>
+
+  <v-row align="center" justify="center" v-else>
+      <v-fade-transition appear >
+        <v-card outlined>
+          <v-card-text>
+            <div class="text--primary">
+              Aucune musique dans la playlist
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-fade-transition>
+    </v-row>
 </template>
 
 <script>
@@ -32,10 +44,10 @@ export default {
   name: 'MusicPlayer',
   data() {
     return {
-      currentSongIndex: undefined,
-      audio: undefined,
+      currentSongIndex: 0,
+      audio: null,
       progressValue: 0,
-      intervalID: undefined,
+      intervalID: null,
     }
   },
   methods: {
