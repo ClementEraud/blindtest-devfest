@@ -18,14 +18,14 @@
     name: 'Home',
     methods: {
       createGame() {
-        const msg = 'a new game has been launched';
-        ipcRenderer.send(eventTypes.gameCreation, msg);
-
-        ipcRenderer.on(eventTypes.gameCreation, (event, gameId) => {
-            this.$router.push(`/admin/game/${gameId}`);
-        });
+        ipcRenderer.send(eventTypes.GAME_CREATED);
       }
     },
+    mounted() {
+      ipcRenderer.on(eventTypes.GAME_CREATED, (event, gameId) => {
+        this.$router.push(`/admin/game/${gameId}`);
+      });
+    }
   }
 </script>
 

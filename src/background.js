@@ -1,5 +1,5 @@
 /**
- * Last update: 20/10/201
+ * Last update: 20/10/2019
  */
 
 'use strict'
@@ -17,7 +17,8 @@ import {
   getAllLevels,
   updateGamePlaylist,
   getGameInfos,
-  updateScore
+  updateScore,
+  getNextId
 } from "./database";
 import { 
   extractSongs,
@@ -60,7 +61,7 @@ function createWindows () {
   });
 
   // On game creation
-  const eventGameCreate = eventTypes.gameCreation;
+  const eventGameCreate = eventTypes.GAME_CREATED;
   ipcMain.on(eventGameCreate, (e) => {
     createGame((err, res) => {
       if (err) throw err;

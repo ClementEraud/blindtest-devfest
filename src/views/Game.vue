@@ -39,7 +39,7 @@
                 this.players = [ ]
             });
 
-            ipcRenderer.on(eventTypes.gameCreation, (event, gameId) => {
+            ipcRenderer.on(eventTypes.GAME_CREATED, (event, gameId) => {
                 this.waitingDialog = false;
                 this.waitingPlayersDialog  = true;
 

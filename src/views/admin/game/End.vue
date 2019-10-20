@@ -21,12 +21,11 @@
         mounted() {
             ipcRenderer.on(eventTypes.getGame, (event, game) => {
                 this.game = game
-                this.bestPlayer = this.game.players.sort(p => p.score)[0]
+                this.bestPlayer = this.game.players.sort(p => p.score).reverse()[0]
             });
             ipcRenderer.send(eventTypes.getGame, this.gameId);
         },
         methods: {
-
         },
         props: {
             gameId: String

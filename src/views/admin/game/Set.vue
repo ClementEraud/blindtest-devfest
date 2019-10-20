@@ -116,10 +116,7 @@
             }
         },
         mounted() {
-            ipcRenderer.on(eventTypes.getAllLevels, (event, levels) => {
-                this.levels = levels
-            });
-
+            ipcRenderer.on(eventTypes.getAllLevels, (event, levels) => { this.levels = levels });
             ipcRenderer.send(eventTypes.getAllLevels, {});
         },
         props: {

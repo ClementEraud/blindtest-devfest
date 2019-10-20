@@ -3,7 +3,9 @@
 export const eventTypes = {
   createPlayer: 'createPlayerEvent',
   gameCancellation: 'gameCancellationEvent',
-  gameCreation: 'gameCreationEvent',
+
+  GAME_CREATED: 'gameCreationEvent', // Une partie est créée
+  
   gameEnd: 'gameEndEvent',
   gameWindowOpen: 'gameWindowOpenEvent',
   launchGame: 'launchGameEvent',
