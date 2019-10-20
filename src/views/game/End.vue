@@ -10,7 +10,7 @@
                         Et le gagnant est...
                     </v-row>
                     <v-row align="center" justify="center">
-                        <p class="regular">{{ bestPlayer.name }}</p>
+                        <p class="regular">{{ bestPlayer.name }} ! </p>
                     </v-row>
                 </v-card>
             </v-col>
@@ -29,7 +29,8 @@
         game: null,
         gifs: [
             "https://media.giphy.com/media/g9582DNuQppxC/source.gif",
-            "https://media.giphy.com/media/3o6fJ1BM7R2EBRDnxK/source.gif"
+            "https://media.giphy.com/media/3o6fJ1BM7R2EBRDnxK/source.gif",
+            "https://media.giphy.com/media/qjfeT5XdAirCg/giphy.gif"
         ]
       }),
       computed: {
