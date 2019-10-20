@@ -64,9 +64,22 @@ function createWindows () {
   ipcMain.on(eventGameCreate, (e) => {
     createGame((err, res) => {
       if (err) throw err;
+
+      if(gameWindow === null)
+        createGameWindow()
+
       replyOnAllWindows(e, eventGameCreate, res.insertId);
     });
   });
+
+  // 
+  const eventOpenGameWindow = eventTypes.gameWindowOpen
+  ipcMain.on(eventOpenGameWindow, (e) => {
+    if(gameWindow === null)
+      createGameWindow()
+
+    replyOnAllWindows(e, eventGameCreate);
+  })
 
   // On player creation
   const eventPlayerCreate = eventTypes.createPlayer;
