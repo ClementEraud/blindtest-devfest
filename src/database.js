@@ -52,8 +52,6 @@ const addNewSong = (songPath, songName, songArtist, cb) => {
     SELECT id
     FROM song
     WHERE song.path = ?
-    AND song.name = ?
-    AND song.artist = ?
   `, [songPath, songName, songArtist], (err, songAlreadyExists) => {
     if (err) return cb(err);
 
